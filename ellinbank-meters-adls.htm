@@ -49,13 +49,13 @@
 
   <body>
     <h1></h1>
-	<p class="d-none">v0.1 2021-08-25</p>
-	<p class="d-none">v0.2 2021-08-27 - Added Lorem ipsum</p>
+	<p class="d-none">v2 2021-11-18: Updates to formatting 12:59:59 and 13:59:59</p>
+    <p class="d-none">v2 2021-12-08: Updates to formatting datetime remove last day of month from the datestamp</p>
     <nav>
       <div class="nav nav-tabs" id="nav-tab" role="tablist">
         <button class="nav-link active" id="nav-energyupgrade-tab" data-bs-toggle="tab" data-bs-target="#nav-energyupgrade" type="button" role="tab" aria-controls="nav-energyupgrade" aria-selected="true">Dairy Energy Upgrades</button>
         <button class="nav-link" id="nav-energyuse-tab" data-bs-toggle="tab" data-bs-target="#nav-energyuse" type="button" role="tab" aria-controls="nav-energyuse" aria-selected="false">Dairy Energy Use</button>
-        <!--button class="nav-link" id="nav-milkproduction-tab" data-bs-toggle="tab" data-bs-target="#nav-milkproduction" type="button" role="tab" aria-controls="nav-milkproduction" aria-selected="false">Milk production</button-->
+        <button class="nav-link" id="nav-milkproduction-tab" data-bs-toggle="tab" data-bs-target="#nav-milkproduction" type="button" role="tab" aria-controls="nav-milkproduction" aria-selected="false">Milk production</button>
       </div>
     </nav>
     <div class="tab-content" id="nav-tabContent">
@@ -63,10 +63,10 @@
 		<img src="img\dairy-diagram.jpg" style="width: 1220px" alt="Diagram showing energy use in the dairy">
         <h2 style="padding-top: 25px">Dairy energy upgrades</h2>
         <h3 style="padding-top: 25px">1. Chiller added</h3>
-        <p style="padding-top: 25px">The Ellinbank SmartFarm had a new compact chiller and duel heat exchanger installed in the dairy at the end of  August 2021.  The new compact chiller was sized to meet farm milk supply demands, provide precise temperature control to rapidly cool milk and ensure factory quality standards are met using an energy efficient scroll compressor and heat recovery.</p>
+        <p style="padding-top: 25px">The Ellinbank SmartFarm had a new compact chiller and duel heat exchanger installed in the dairy.  The new compact chiller was sized to meet farm milk supply demands, provide precise temperature control to rapidly cool milk and ensure factory quality standards are met using an energy efficient scroll compressor and heat recovery.</p>
 		<p>Milk collected during milking comes out of the cows at around 37 degrees Celsius.  It is pre-cooled through the plate cooler. Cold glycol running between the chiller and plate cooler helps to lower the temperature of the milk more rapidly than using cold water alone.  The milk exits the plate cooler and enters the vat at 5 - 6 degrees Celsius. Prior to the installation of the new chiller system milk was entering the vat at around 15 degrees Celsius. The milk is cooled further in the vat, to be stored at 4 degrees Celsius. </p>
-		<p>The more effective cooling provided by the new chiller means that the vat compressor no longer has to work as hard reduce  milk temperature to the necessary 4 degrees Celsius. The chiller’s pre-cooling process is more energy efficient than the vat, so this saves overall energy use in the dairy.</p>
-		<p>In addition, heat exchange occurs in the chiller. During the cooling process the compact chiller produces warm water which is used to pre-heat water reducing energy cost on the farm. This hot water is then flushed through the dairy plant for cleaning after each milking.</p>
+		<p>The more effective cooling provided by the new chiller means that the vat compressor no longer has to work as hard to reduce milk temperature to the necessary 4 degrees Celsius. The chiller’s pre-cooling process is more energy efficient than the vat, so this saves overall energy use in the dairy.</p>
+		<p>In addition, heat exchange occurs in the chiller. During the cooling process the compact chiller produces heat which is used to pre-heat the water supply to the hot water system, reducing energy cost on the farm. Hot water is flushed through the dairy plant for cleaning after each milking.</p>
       </div>
       <div class="tab-pane fade" id="nav-energyuse" role="tabpanel" aria-labelledby="nav-energyuse-tab"><br style="padding-top: 25px;"><!-- padding from tabs to buttons-->
         <!-- nested -->
@@ -191,12 +191,13 @@
         },
         xAxis: {
           categories: dairymeter_timestamp_data,
-          tickInterval: 6,
+          tickInterval: 7,
           crosshair: true,
           type: 'datetime',
 		  labels: {
 			formatter: function() {
 			  let myformat=moment(this.value).format("HH:mm");
+              console.log(myformat)
 			  return myformat;
             },
             //rotation: 90,
@@ -278,18 +279,20 @@
         dynamicTyping: true,
         header: true, 
         step: function(row) {
+            datetime_stamp=(row.data.datetime).replace('13:00:00','').replace('13:59:59','');
+            // console.log('dairymeter_daily_kwh', datetime_stamp);
             dairymeter_daily_kwh_data.push(row.data.value);
         }
     });
-    //console.log('dairymeter_daily_kwh_data:',dairymeter_daily_kwh_data)
+    // console.log('dairymeter_daily_kwh_data:',dairymeter_daily_kwh_data)
     var dairymeter_daily_kwh_timestamp_data = [];
     Papa.parse(dairymeter_daily_kwh, {
         skipEmptyLines: true, 
         dynamicTyping: true,
         header: true, 
         step: function(row) {
-            datetime_stamp=(row.data.datetime).replace('13:59:59','');
-			//console.log(datetime_stamp);
+            datetime_stamp=(row.data.datetime).replace('13:59:59','').replace('13:00:00','');
+			// console.log('dairymeter_daily_kwh_timestamp_data', datetime_stamp);
             dairymeter_daily_kwh_timestamp_data.push(datetime_stamp);
         }
     });
@@ -308,6 +311,8 @@
         dynamicTyping: true,
         header: true, 
         step: function(row) {
+            datetime_stamp=(row.data.datetime).replace('13:00:00','').replace('13:59:59','');
+            console.log(datetime_stamp);
             dairychillermeter_daily_kwh_data.push(row.data.value);
         }
     });
@@ -356,11 +361,11 @@
             timezone: 'Australia/Melbourne'
         },
     });
-    let activity_daily = getData();
-    $.each(activity_daily.datasets, function (i, dataset) {
+    let milk_activity_daily = getData();
+    $.each(milk_activity_daily.datasets, function (i, dataset) {
         // Add X values
         dataset.data = Highcharts.map(dataset.data, function (val, j) {
-            return [activity_daily.xData[j], val];
+            return [milk_activity_daily.xData[j], val];
         });
         $('<div class="chart highcharts-container">')
             .appendTo("#energy-container-daily")
@@ -369,7 +374,7 @@
                     type: 'spline',
                 },
                 time: {
-                    // timezone: 'Australia/Melbourne'
+                    timezone: 'Australia/Melbourne'
                 },
                 title: {
                     text: dataset.name,
@@ -383,9 +388,11 @@
                 xAxis: {
                     categories: dairymeter_daily_kwh_timestamp_data,
                     crosshair: true,
-                    type: 'datetime',
-					tickInterval: 6,
-
+                    // type: 'datetime',
+					tickInterval: 7,
+                    labels: {
+                        rotation: 80
+                    },
 					style: {
 					//	fontSize: '15px'
 					},
@@ -472,7 +479,7 @@
         dynamicTyping: true,
         header: true, 
         step: function(row) {
-            datetime_stamp=row.data.datetime.replace('13:59:59','')
+            datetime_stamp=row.data.datetime.replace('13:59:59','').replace('13:00:00','').replace('-28','').replace('-29','').replace('-30','').replace('-31','').replace('12:59:59','');
             dairymeter_monthly_kwh_timestamp_data.push(datetime_stamp);
         }
     });
@@ -626,8 +633,352 @@
         <!-- nested -->
       </div>
       <div class="tab-pane fade" id="nav-milkproduction" role="tabpanel" aria-labelledby="nav-milkproduction-tab"><br style="padding-top: 25px;"><!-- padding from tabs to buttons-->
-        <h2>Milk production</h2>
-        <p>For the next launch</p>
+
+<!-- start milk -->
+    <!--p>v0.1 [11:41 AM 11/11/2021]</p-->
+    <!--p>v0.1 [2:41 PM 17/11/2021]</p-->
+    <ul class="nav nav-pills mb-2" id="pills-tab" role="tablist">
+      <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="pills-daily-tab" data-bs-toggle="pill" data-bs-target="#pills-daily" type="button" role="tab" aria-controls="pills-daily" aria-selected="true">Daily</button>
+      </li>
+      <li class="nav-item" role="presentation">
+          <button class="nav-link" id="pills-monthly-tab" data-bs-toggle="pill" data-bs-target="#pills-monthly" type="button" role="tab" aria-controls="pills-monthly" aria-selected="false">Monthly</button>
+      </li>
+  </ul>
+  <div class="tab-content" id="pills-tabContent">
+      <div class="tab-pane fade show active" id="pills-daily" role="tabpanel" aria-labelledby="pills-daily-tab">
+
+
+  <!-- start milkflowtotal daily -->
+  <div id="milkflow-container-daily"></div>
+  <script type="text/javascript">
+      var milkflowtotal_daily_litre = [];
+      $.ajax({
+          url: 'halo/halo-milkflowtotal193865daily-litre.csv',
+          success: function(data) {
+              milkflowtotal_daily_litre=data
+          }, 
+          async: false
+      })
+      var milkflowtotal_daily_litre_data = [];
+      Papa.parse(milkflowtotal_daily_litre, {
+          skipEmptyLines: true, 
+          dynamicTyping: true,
+          header: true, 
+          step: function(row) {
+              milkflowtotal_daily_litre_data.push(row.data.value);
+          }
+      });
+      //console.log('milkflowtotal_daily_litre_data:',milkflowtotal_daily_litre_data)
+      var milkflowtotal_daily_litre_timestamp_data = [];
+      Papa.parse(milkflowtotal_daily_litre, {
+          skipEmptyLines: true, 
+          dynamicTyping: true,
+          header: true, 
+          step: function(row) {
+              datetime_stamp=(row.data.datetime).replace('13:59:59','').replace('12:59:59','').replace('13:00:00','');
+              // console.log(datetime_stamp);
+              milkflowtotal_daily_litre_timestamp_data.push(datetime_stamp);
+          }
+      });
+      //console.log('milkflowtotal_daily_litre_timestamp_data:',milkflowtotal_daily_litre_timestamp_data)
+      $("#milkflow-container-daily").bind("mousemove mouseleave", function (e) {
+          for (let i = 0; i < Highcharts.charts.length; ++i) {
+              let chart = Highcharts.charts[i];
+              let event = chart.pointer.normalize(e.originalEvent); // Find coordinates within the chart
+              let point;
+              for (let j = 0; j < chart.series.length && !point; ++j) {
+                  point = chart.series[j].searchPoint(event, true);
+              }
+              if (!point) return;
+              if (e.type === "mousemove") {
+                  point.onMouseOver();
+                  chart.xAxis[0].drawCrosshair(event, point);
+              } else {
+                  point.onMouseOut();
+                  chart.tooltip.hide(point);
+                  chart.xAxis[0].hideCrosshair();
+              }
+          }
+      });
+      Highcharts.Pointer.prototype.reset = function () {
+          return undefined;
+      };
+      function syncExtremes(e) {
+          var thisChart = this.chart;
+          if (e.trigger !== "syncExtremes") {
+              // Prevent feedback loop
+              Highcharts.each(Highcharts.charts, function (chart) {
+                  if (chart !== thisChart) {
+                      if (chart.xAxis[0].setExtremes) {
+                          // It is null while updating
+                          chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, {
+                              trigger: "syncExtremes"
+                          });
+                      }
+                  }
+              });
+          }
+      }
+      Highcharts.setOptions({
+          time: {
+              timezone: 'Australia/Melbourne'
+          },
+      });
+      let activity_daily = getData();
+      $.each(activity_daily.datasets, function (i, dataset) {
+          // Add X values
+          dataset.data = Highcharts.map(dataset.data, function (val, j) {
+              return [activity_daily.xData[j], val];
+          });
+          $('<div class="chart highcharts-container">')
+              .appendTo("#milkflow-container-daily")
+              .highcharts({
+                  chart: {
+                      type: 'spline',
+                  },
+                  time: {
+                      // timezone: 'Australia/Melbourne'
+                  },
+                  title: {
+                      text: dataset.name,
+                  },
+                  credits: {
+                      enabled: false
+                  },
+                  legend: {
+                      enabled: false,
+                  },
+                  xAxis: {
+                      categories: milkflowtotal_daily_litre_timestamp_data,
+                      crosshair: true,
+                      type: 'datetime',
+                      tickInterval: 6,
+  
+                      style: {
+                      //	fontSize: '15px'
+                      },
+                      events: {
+                          setExtremes: syncExtremes
+                      }
+                  },
+                  yAxis: {
+                      title: {
+                          text: dataset.name
+                      }
+                  },
+                  tooltip: {
+                      shared: true,
+                      valueDecimals: 1
+                  },
+                  series: [{
+                      data: dataset.data,
+                      name: dataset.name,
+                      type: dataset.type,
+                      color: Highcharts.getOptions().colors[i],
+                      tooltip: {
+                          valueSuffix: " " + dataset.unit
+                      },
+                      marker: {
+                          enabled: false
+                      }
+                  }, {
+                      name: dataset.name,
+                      type: dataset.type,
+                      color: Highcharts.getOptions().colors[i],
+                      tooltip: {
+                          valueSuffix: " " + dataset.unit
+                      },
+                  }]
+              });
+      });
+      function getData() {
+          return {
+              "xData": [], 
+              "datasets": [{
+                  "name": "Daily Milk Flow Total (Litre)",
+                  "data": milkflowtotal_daily_litre_data,
+                  "unit": "litre",
+                  "type": "spline"
+              }]
+          };
+      }
+  </script>
+          <p class="highcharts-container-p-first-child"><strong>Milk Production Monitoring</strong></p>
+          <p>Milk is measured each morning and afternoon milking, as litres in the vat that goes to the factory.</p>
+          <p>The daily totals of factory milk litres are displayed here.</p>
+          <p>At mid-November 2021, there were 436 milkers.</p>
+    
+
+      </div>
+      <!-- end milkflowtotal daily -->
+      <div class="tab-pane fade" id="pills-monthly" role="tabpanel" aria-labelledby="pills-monthly-tab">
+
+
+  <!-- start monthly milkflowtotal usage -->
+  <div id="milkflowtotal-container-monthly"></div>
+  <script type="text/javascript">
+      var milkflowtotal_monthly_litre = [];
+      $.ajax({
+          url: 'halo/halo-milkflowtotal193865monthly-litre.csv',
+          success: function(data) {
+              milkflowtotal_monthly_litre=data
+          }, 
+          async: false
+      })
+      var milkflowtotal_monthly_litre_data = [];
+      Papa.parse(milkflowtotal_monthly_litre, {
+          skipEmptyLines: true, 
+          dynamicTyping: true,
+          header: true, 
+          step: function(row) {
+              milkflowtotal_monthly_litre_data.push(row.data.value);
+          }
+      });
+      //console.log('milkflowtotal_monthly_litre_data:',milkflowtotal_monthly_litre_data)
+      var milkflowtotal_monthly_litre_timestamp_data = [];
+      Papa.parse(milkflowtotal_monthly_litre, {
+          skipEmptyLines: true, 
+          dynamicTyping: true,
+          header: true, 
+          step: function(row) {
+              datetime_stamp=(row.data.datetime).replace('-28','').replace('-29','').replace('-30','').replace('-31','').replace('12:59:59','').replace('13:59:59','');
+              // console.log(datetime_stamp);
+              milkflowtotal_monthly_litre_timestamp_data.push(datetime_stamp);
+          }
+      });
+      //console.log('milkflowtotal_monthly_litre_timestamp_data:',milkflowtotal_monthly_litre_timestamp_data)
+      $("#milkflowtotal-container-monthly").bind("mousemove mouseleave", function (e) {
+          for (let i = 0; i < Highcharts.charts.length; ++i) {
+              let chart = Highcharts.charts[i];
+              let event = chart.pointer.normalize(e.originalEvent); // Find coordinates within the chart
+              let point;
+              for (let j = 0; j < chart.series.length && !point; ++j) {
+                  point = chart.series[j].searchPoint(event, true);
+              }
+              if (!point) return;
+  
+              if (e.type === "mousemove") {
+                  point.onMouseOver();
+                  chart.xAxis[0].drawCrosshair(event, point);
+              } else {
+                  point.onMouseOut();
+                  chart.tooltip.hide(point);
+                  chart.xAxis[0].hideCrosshair();
+              }
+          }
+      });
+      Highcharts.Pointer.prototype.reset = function () {
+          return undefined;
+      };
+      function syncExtremes(e) {
+          var thisChart = this.chart;
+          if (e.trigger !== "syncExtremes") {
+              // Prevent feedback loop
+              Highcharts.each(Highcharts.charts, function (chart) {
+                  if (chart !== thisChart) {
+                      if (chart.xAxis[0].setExtremes) {
+                          // It is null while updating
+                          chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, {
+                              trigger: "syncExtremes"
+                          });
+                      }
+                  }
+              });
+          }
+      }
+      Highcharts.setOptions({
+          time: {
+              timezone: 'Australia/Melbourne'
+          },
+      });
+      let milk_activity_monthly = getData();
+      $.each(milk_activity_monthly.datasets, function (i, dataset) {
+          // Add X values
+          dataset.data = Highcharts.map(dataset.data, function (val, j) {
+              return [milk_activity_monthly.xData[j], val];
+          });
+          $('<div class="chart highcharts-container">')
+              .appendTo("#milkflowtotal-container-monthly")
+              .highcharts({
+                  chart: {
+                      type: 'spline',
+                  },
+                  time: {
+                      // timezone: 'Australia/Melbourne'
+                  },
+                  title: {
+                      text: dataset.name,
+                  },
+                  credits: {
+                      enabled: false
+                  },
+                  legend: {
+                      enabled: false,
+                  },
+                  xAxis: {
+                      categories: milkflowtotal_monthly_litre_timestamp_data,
+                      crosshair: true,
+                      type: 'datetime',
+                      events: {
+                          setExtremes: syncExtremes
+                      }
+                  },
+                  yAxis: {
+                      title: {
+                          text: dataset.name
+                      }
+                  },
+                  tooltip: {
+                      shared: true,
+                      valueDecimals: 1
+                  },
+                  series: [{
+                      data: dataset.data,
+                      name: dataset.name,
+                      type: dataset.type,
+                      color: Highcharts.getOptions().colors[i],
+                      tooltip: {
+                          valueSuffix: " " + dataset.unit
+                      },
+                      marker: {
+                          enabled: false
+                      }
+                  }, {
+                      name: dataset.name,
+                      type: dataset.type,
+                      color: Highcharts.getOptions().colors[i],
+                      tooltip: {
+                          valueSuffix: " " + dataset.unit
+                      },
+                  }]
+              });
+      });
+      function getData() {
+          return {
+              "xData": [], 
+              "datasets": [{
+                  "name": "Monthly Milk Flow Total (Litre)",
+                  "data": milkflowtotal_monthly_litre_data,
+                  "unit": "litre",
+                  "type": "spline"
+              }]
+          };
+      }
+  </script>
+          <p class="highcharts-container-p-first-child"><strong>Milk Production Monitoring</strong></p>
+          <p>Milk is measured each morning and afternoon milking, as litres in the vat that goes to the factory.</p>
+          <p>The monthly totals of factory milk litres are displayed here.</p>
+          <p>At mid-November 2021, there were 436 milkers.</p>
+  <!-- end monthly milkflowtotal usage -->
+
+      </div>
+  </div>
+
+
+<!-- end milk -->
+        
+
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"

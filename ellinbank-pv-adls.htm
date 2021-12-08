@@ -33,6 +33,12 @@
             font-size: 15px;
         }
     </style>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+	  gtag('config', 'G-KDPQCLL38M');
+	</script>
     <title></title>
   </head>
   <body>
@@ -96,7 +102,7 @@
                     url: './alphaess/ellinbank-alphaess-ppv-kw-today.csv',
                     success: function (data) {
                         ppv_kw=data
-                        console.log(ppv_kw)
+                        //console.log(ppv_kw)
                     }, 
                     async: false
                 })
@@ -105,7 +111,7 @@
                     url: './alphaess/ellinbank-alphaess-cbat-percent-today.csv',
                     success: function (data) {
                         cbat_percent=data
-                        console.log(cbat_percent)
+                        //console.log(cbat_percent)
                     }, 
                     async: false
                 })
@@ -144,9 +150,9 @@
 							style: {
                                 color: Highcharts.getOptions().colors[0],
                             },
-			},
-			showFirstLabel: false
-		    }],
+						},
+						showFirstLabel: false
+					}],
                     chart: {
                         type: 'area'
                     },
@@ -175,8 +181,10 @@
             <p class="highcharts-container-p-first-child">Solar + battery system</p>
             <p>Ellinbank’s solar system has 248 solar panels (PV or photovoltaic panels) of 400 W per panel, for a total capacity of 99.2kW and with a 110kW solar inverter.  The solar panels are on the roof of a farm building that is structurally certified to support the load of the panels.</p>
             <p>The solar energy is used directly on the farm, as well as stored in a 100kWh lithium-ion battery.</p>
-            <p>This chart shows how the solar and battery system works over 24 hours. The battery starts in the early morning with 100% charge, represented in the chart above by the blue area and the measures on the right bar. It is set to discharge over 3 hours, during peak dairy activities. The battery recharges from solar energy during the day.  With low sunlight periods, it may top up with power from the grid.</p>
-            <p>The dark area of the chart show how much solar energy is produced over this time, hover over the area to see the values.</p>
+            <!--p>This chart shows how the solar and battery system works over 24 hours. The battery starts in the early morning with 100% charge, represented in the chart above by the blue area and the measures on the right bar. It is set to discharge over 3 hours, during peak dairy activities. The battery recharges from solar energy during the day.  With low sunlight periods, it may top up with power from the grid.</p>
+            <p>The dark area of the chart show how much solar energy is produced over this time, hover over the area to see the values.</p-->
+			<p>On 18 September 2021, the solar energy and battery system shut down as the site power was turned off for the installation of a horizontal wind turbine. The system was supposed to restart when the power was switched back on, but did not, so the suppliers were called.  The battery was inspected by the company’s local technician but remains unsolved and not working at 26 October 2021. We are waiting on the supplier to send an expert from interstate.</p>
+			<p>The solar energy system was found to have a faulty relay which was replaced, allowing the solar panels to work again. The performance of the solar panels can be seen on the daily and monthly solar production charts.</p>
         </div>
         <div class="tab-pane fade" id="pills-daily" role="tabpanel" aria-labelledby="pills-daily-tab">
             <div id="isolarcloud-stock-daily-pv" class="highcharts-container"></div>
@@ -220,9 +228,9 @@
                             }
                         }
                     },
-		    navigator: {
-			enabled: false
-		    },
+					navigator: {
+						enabled: false
+					},
                     xAxis: {
                         type: 'datetime'
                     }
